@@ -1,8 +1,7 @@
 # aslzip
 
-A Zip file compress/uncompress extension library for ASL
-
-This might be merged into the ASL library in the future.
+A Zip file compress/uncompress extension library for ASL. It is based on the *miniz* library.
+It might be merged into the ASL library in the future.
 
 
 You can read a specific contained file as a string or as a binary blob. Or you can
@@ -13,7 +12,7 @@ ZipFile zip("archive.zip");
 
 String text = zip["some/file.txt"].text();
 
-zip["some/data.csv"].extact("./");  // will produce "./data.csv"
+zip["some/data.csv"].extract("./");  // will produce "./data.csv"
 ```
 
 Adding files to a new zip archive can also use files, strings or byte arrays as input:
