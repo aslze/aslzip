@@ -61,8 +61,8 @@ public:
 	bool extract(const String& destdir);
 
 private:
-	int _index;
 	ZipFile* _owner;
+	int _index;
 	String _path;
 	int _size;
 	Date _date;

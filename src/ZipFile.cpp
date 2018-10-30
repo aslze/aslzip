@@ -27,8 +27,13 @@ static String sanitize(const String& path)
 }
 	
 ZipItem::ZipItem(ZipFile* owner, const String& path, int index, int size, double t)
-	:_owner(owner), _path(path), _index(index), _size(size), _date(Date(t))
+	:_owner(owner), _index(index), _path(path), _size(size), _date(Date(t))
 {
+}
+
+bool ZipItem::isDirectory() const
+{
+	return _path.endsWith('/');
 }
 
 String ZipItem::text()
@@ -146,7 +151,7 @@ bool ZipFile::unpack(const String& dest)
 				Directory::create(dest + dir);
 			}
 		}
-		if (!name.endsWith('/'))
+		if (!item.isDirectory())
 			mz_zip_reader_extract_file_to_file(_zip, name, dest + "/" + name, 0);
 	}
 	return true;
