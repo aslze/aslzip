@@ -71,14 +71,14 @@ int mz_inflate(unsigned char *pDest, mz_ulong *pDest_len, const unsigned char *p
 
 void gzip(const String& path)
 {
-	auto data = File(path).content();
+	Array<byte> data = File(path).content();
 	Array<byte> cdata(data.length());
 	mz_ulong size = data.length();
 	double t1 = now();
 	mz_deflate(cdata, &size, data, data.length(), -1);
 	double t2 = now();
 	cdata.resize(size);
-	printf("%i -> %i %.1f %% (%f s)\n", data.length(), size, 100.0*size / data.length(), t2 - t1);
+	//printf("%i -> %i %.1f %% (%f s)\n", data.length(), (int)size, 100.0*size / data.length(), t2 - t1);
 
 	File file(path + ".gz", File::WRITE);
 	file << '\x1f' << '\x8b' << '\x08' << '\x08' << (unsigned)File(path).lastModified().time() << '\x02' << '\0';
@@ -98,7 +98,7 @@ void gunzip(const String& path)
 	while (char c = file.read<char>())
 		name << c;
 	unsigned len = unsigned(file.size() - file.position() - 8);
-	printf("%s %s %i\n", *name, *date.toString(), len);
+	//printf("%s %s %i\n", *name, *date.toString(), len);
 	Array<byte> cdata(len);
 	file.read(cdata.ptr(), len);
 	mz_ulong size = cdata.length() * 8;
@@ -108,7 +108,7 @@ void gunzip(const String& path)
 	double t2 = now();
 	printf("%i\n", ret);
 	data.resize(size);
-	printf("%i -> %i (%f s)\n", cdata.length(), size, t2 - t1);
+	//printf("%i -> %i (%f s)\n", cdata.length(), (int)size, t2 - t1);
 	File(path.replace(".gz", "")).put(data);
 }
 

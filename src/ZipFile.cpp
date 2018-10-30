@@ -54,6 +54,8 @@ Array<byte> ZipItem::content()
 
 bool ZipItem::extract(const String& dest)
 {
+	if (_index < 0)
+		return false;
 	return mz_zip_reader_extract_to_file(_owner->_zip, _index, dest + "/" + _path.split("/").last(), 0) != 0;
 }
 
@@ -132,7 +134,7 @@ bool ZipFile::unpack(const String& dest)
 	}
 	foreach2(String& name, ZipItem& item, _namedItems)
 	{
-		auto parts = name.split('/');
+		Array<String> parts = name.split('/');
 		String dir;
 		if (parts.length() > 1)
 		{

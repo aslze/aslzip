@@ -22,7 +22,9 @@ target_link_libraries(${TARGET} asls)
 set_target_properties(${TARGET} PROPERTIES PUBLIC_HEADER "${HEADERS}")
 target_include_directories(${TARGET} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include> $<INSTALL_INTERFACE:${INSTALL_DIR}/include> )
 
-export(TARGETS ${TARGET} EXPORT ${LIB_NAME} FILE ${CMAKE_BINARY_DIR}/${TARGET}Config.cmake )
+set(TARGETS ${TARGETS} PARENT_SCOPE)
+
+#export(TARGETS ${TARGET} EXPORT ${LIB_NAME} FILE ${CMAKE_BINARY_DIR}/${TARGET}Config.cmake )
 
 install(TARGETS ${TARGET}
 	EXPORT ${LIB_NAME}
