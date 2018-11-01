@@ -61,7 +61,8 @@ bool ZipItem::extract(const String& dest)
 {
 	if (_index < 0)
 		return false;
-	return mz_zip_reader_extract_to_file(_owner->_zip, _index, dest + "/" + _path.split("/").last(), 0) != 0;
+	File file(dest + "/" + _path.split("/").last(), File::WRITE);
+	return mz_zip_reader_extract_to_cfile(_owner->_zip, _index, file.stdio(), 0) != 0;
 }
 
 ZipFile::~ZipFile()
@@ -72,7 +73,7 @@ ZipFile::~ZipFile()
 	}
 	else
 		mz_zip_reader_end(_zip);
-	delete (mz_zip_archive_*)_zip;
+	delete (mz_zip_archive*)_zip;
 }
 
 void ZipFile::endWrite()
@@ -84,6 +85,7 @@ void ZipFile::endWrite()
 			error("Cannot finalize archive");
 		}
 		mz_zip_writer_end(_zip);
+		_file.close();
 	}
 }
 
@@ -96,7 +98,8 @@ ZipFile::ZipFile(const String& path)
 	_zip = (mz_zip_archive_*) new mz_zip_archive;
 	_buffer.resize(0x10000);
 	mz_zip_zero_struct(_zip);
-	bool status = mz_zip_reader_init_file(_zip, path, 0) != 0;
+	_file.open(path, File::READ);
+	bool status = mz_zip_reader_init_cfile(_zip, _file.stdio(), 0, 0) != 0;
 	if (!status)
 	{
 		return;
@@ -152,7 +155,7 @@ bool ZipFile::unpack(const String& dest)
 			}
 		}
 		if (!item.isDirectory())
-			mz_zip_reader_extract_file_to_file(_zip, name, dest + "/" + name, 0);
+			item.extract(dest + "/" + Path(name).directory().string());
 	}
 	return true;
 }
@@ -169,7 +172,7 @@ bool ZipFile::packdir(const String& dir, const String& srcdir)
 				return false;
 		}
 		else {
-			if (!add(dir, item))
+			if (!add(dir + item.name(), item))
 				return false;
 		}
 	}
@@ -211,7 +214,10 @@ bool ZipFile::add(const String& name, const File& file)
 		return false;
 	String path = sanitize(name);
 	path = (!path || path.endsWith('/')) ? path + file.name() : path;
-	if (!mz_zip_writer_add_file(_zip, path, file.path(), "", 0, _levelFlags))
+	ULong size = file.size();
+	time_t t = (time_t)file.lastModified().time();
+	File file2(file.path(), File::READ);
+	if (!mz_zip_writer_add_cfile(_zip, path, file2.stdio(), size, &t, "", 0, _levelFlags, 0, 0, 0, 0))
 	{
 		return error(String(0, "Cannot add file '%s' from '%s'", *path, *file.path()));
 	}
@@ -225,14 +231,19 @@ bool ZipFile::initWrite()
 	
 	if (!_items)
 	{
-		if (!mz_zip_writer_init_file_v2(_zip, _path, 0, _levelFlags))
+		_file.open(_path, File::WRITE);
+		if (!mz_zip_writer_init_cfile(_zip, _file.stdio(), _levelFlags))
 		{
 			return error("Cannot create file");
 		}
 	}
 	else
 	{
-		if (!mz_zip_writer_init_from_reader_v2(_zip, _path, _levelFlags))
+		ULong offset = ((mz_zip_archive*)_zip)->m_central_directory_file_ofs;
+		_file.close();
+		_file.open(_path, File::WRITE);
+		_file.seek(offset);
+		if (!mz_zip_writer_init_cfile(_zip, _file.stdio(), _levelFlags))
 		{
 			mz_zip_reader_end(_zip);
 			return error("Cannot create writer from reader");

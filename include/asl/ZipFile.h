@@ -132,6 +132,7 @@ private:
 	bool _writing;
 	int _levelFlags;
 	int _level;
+	File _file;
 };
 
 }
