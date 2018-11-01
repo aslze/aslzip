@@ -1,7 +1,8 @@
 # aslzip
 
-A Zip file compress/uncompress extension library for ASL. It is based on the *miniz* library.
-It might be merged into the ASL library in the future.
+An easy to use Zip file compress/uncompress library for ASL. It is based on the *miniz* library.
+It might be merged into the ASL library in the future. Zip archives and inserted files can have
+Unicode names in UTF-8, even on Windows.
 
 
 You can read a specific contained file as a string or as a binary blob. Or you can
