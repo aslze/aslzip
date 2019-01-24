@@ -13,7 +13,9 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(CMAKE_DEBUG_POSTFIX "d")
 
-find_package(ASL REQUIRED)
+if(NOT TARGET asls)
+	find_package(ASL REQUIRED)
+endif()
 
 add_subdirectory(src)
 
