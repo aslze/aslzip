@@ -102,7 +102,7 @@ ZipFile::ZipFile(const String& path)
 	_buffer.resize(0x10000);
 	mz_zip_zero_struct(_zip);
 	_file.open(path, File::READ);
-	bool status = mz_zip_reader_init_cfile(_zip, _file.stdio(), 0, 0) != 0;
+	bool status = mz_zip_reader_init_cfile(_zip, _file.stdio(), 0, MZ_ZIP_FLAG_DO_NOT_SORT_CENTRAL_DIRECTORY) != 0;
 	if (!status)
 	{
 		return;
@@ -244,9 +244,9 @@ bool ZipFile::initWrite()
 	{
 		ULong offset = ((mz_zip_archive*)_zip)->m_central_directory_file_ofs;
 		_file.close();
-		_file.open(_path, File::WRITE);
-		_file.seek(offset);
-		if (!mz_zip_writer_init_cfile(_zip, _file.stdio(), _levelFlags))
+		_file.open(_path, File::RW);
+
+		if (!mz_zip_writer_init_from_reader_v2(_zip, _path, _levelFlags))
 		{
 			mz_zip_reader_end(_zip);
 			return error("Cannot create writer from reader");
