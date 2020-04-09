@@ -1,5 +1,4 @@
 #include <asl/ZipFile.h>
-#include <asl/GZip.h>
 
 using namespace asl;
 
@@ -18,19 +17,24 @@ int main()
 
 	zip["doc.kml"].extract("./");
 
-	File("dummy.zip").remove();
-
-	ZipFile zip2("dummy.zip");
-
-	zip2.add("data.txt", "Hello world!");
-	zip2.setLevel(0);
-	zip2.add("images/", File("card.jpg"));
-	
-	zip2.setLevel(5);
-	
-	zip2.add("obj.dae", File("model.dae"));
-
 	zip.unpack("./kmz");
+
+	//File("dummy.zip").remove();
+
+	{
+		ZipFile zip2("dummy.zip");
+
+		zip2.add("datáλ.txt", "New Hello world!");
+		zip2.add("datáλ0.txt", "New Hello world 2!");
+		zip2.setLevel(0);
+		zip2.add("images/", File("card.jpg"));
+
+		zip2.setLevel(5);
+
+		zip2.add("obj.dae", File("model.dae"));
+
+	}
+	ZipFile("dummy.zip").unpack("./dummy");
 
 	File("kmz.kmz").remove();
 	ZipFile("kmz.kmz").pack("kmz", true);
