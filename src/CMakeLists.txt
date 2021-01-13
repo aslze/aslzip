@@ -22,11 +22,7 @@ target_link_libraries(${TARGET} asls)
 set_target_properties(${TARGET} PROPERTIES PUBLIC_HEADER "${HEADERS}")
 target_include_directories(${TARGET} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include> $<INSTALL_INTERFACE:${INSTALL_DIR}/include> )
 
-list(APPEND TARGETS ${TARGET})
-
-export(TARGETS ${TARGETS} EXPORT ${LIB_NAME} FILE ${LIB_NAME}Config.cmake )
-
-install(TARGETS ${TARGETS}
+install(TARGETS ${TARGET}
 	EXPORT ${LIB_NAME}
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib
@@ -34,4 +30,3 @@ install(TARGETS ${TARGETS}
 	PUBLIC_HEADER DESTINATION include/${INC}
 )
 
-set(TARGETS ${TARGETS} PARENT_SCOPE)

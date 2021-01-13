@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0)
 
 set(LIB_NAME aslzip)
 
@@ -24,12 +24,10 @@ if(ASLZIP_BUILD_SAMPLES)
 	add_subdirectory(samples)
 endif()
 
-export( TARGETS ${TARGETS} FILE ${LIB_NAME}Config.cmake )
+export(EXPORT ${LIB_NAME} FILE ${LIB_NAME}Config.cmake)
 
 if(CMAKE_SOURCE_DIR STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 	export( PACKAGE ${LIB_NAME} )
 endif()
 
 install(EXPORT ${LIB_NAME} DESTINATION cmake FILE ${LIB_NAME}Config.cmake )
-
-#install(FILES ${CMAKE_BINARY_DIR}/${LIB_NAME}Config.cmake DESTINATION ${INSTALL_DIR}/cmake)
