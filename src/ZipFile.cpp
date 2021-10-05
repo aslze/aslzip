@@ -62,6 +62,8 @@ bool ZipItem::extract(const String& dest)
 	if (_index < 0)
 		return false;
 	File file(dest + "/" + _path.split("/").last(), File::WRITE);
+	if (!file)
+		return false;
 	bool ok = mz_zip_reader_extract_to_cfile(_owner->_zip, _index, file.stdio(), 0) != 0;
 	file.close();
 	file.setLastModified(_date);
