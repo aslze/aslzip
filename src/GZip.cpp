@@ -75,7 +75,7 @@ void gzip(const String& path)
 	Array<byte> cdata(data.length());
 	mz_ulong size = data.length();
 	double t1 = now();
-	mz_deflate(cdata, &size, data, data.length(), -1);
+	mz_deflate(cdata.ptr(), &size, data.ptr(), data.length(), -1);
 	double t2 = now();
 	cdata.resize(size);
 	//printf("%i -> %i %.1f %% (%f s)\n", data.length(), (int)size, 100.0*size / data.length(), t2 - t1);
@@ -84,7 +84,7 @@ void gzip(const String& path)
 	file << '\x1f' << '\x8b' << '\x08' << '\x08' << (unsigned)File(path).lastModified().time() << '\x02' << '\0';
 	file << Path(path).name() << '\0';
 	file << cdata;
-	unsigned crc = mz_crc32(MZ_CRC32_INIT, data, data.length());
+	unsigned crc = mz_crc32(MZ_CRC32_INIT, data.ptr(), data.length());
 	file << crc << (unsigned)data.length();
 }
 
@@ -104,7 +104,7 @@ void gunzip(const String& path)
 	mz_ulong size = cdata.length() * 8;
 	Array<byte> data(size);
 	double t1 = now();
-	int ret = mz_inflate(data, &size, cdata, cdata.length());
+	int ret = mz_inflate(data.ptr(), &size, cdata.ptr(), cdata.length());
 	double t2 = now();
 	printf("%i\n", ret);
 	data.resize(size);
