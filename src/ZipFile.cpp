@@ -43,7 +43,7 @@ String ZipItem::text()
 		s = "";
 		return s;
 	}
-	mz_zip_reader_extract_to_mem_no_alloc(_owner->_zip, _index, (char*)s, _size, 0, _owner->_buffer.ptr(), _owner->_buffer.length());
+	mz_zip_reader_extract_to_mem_no_alloc(_owner->_zip, _index, (char*)*s, _size, 0, _owner->_buffer.ptr(), _owner->_buffer.length());
 	s[_size] = '\0';
 	return s;
 }
