@@ -2625,6 +2625,10 @@ tinfl_status tinfl_decompress(tinfl_decompressor *r, const mz_uint8 *pIn_buf_nex
 						counter = sym2;
 						bit_buf >>= code_len;
 						num_bits -= code_len;
+						if (code_len == 0)
+						{
+							TINFL_CR_RETURN_FOREVER(40, TINFL_STATUS_FAILED);
+						}
 						if (counter & 256)
 							break;
 
@@ -2648,6 +2652,10 @@ tinfl_status tinfl_decompress(tinfl_decompressor *r, const mz_uint8 *pIn_buf_nex
 						}
 						bit_buf >>= code_len;
 						num_bits -= code_len;
+						if (code_len == 0)
+						{
+							TINFL_CR_RETURN_FOREVER(54, TINFL_STATUS_FAILED);
+						}
 
 						pOut_buf_cur[0] = (mz_uint8)counter;
 						if (sym2 & 256)
