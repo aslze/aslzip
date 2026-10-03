@@ -3723,7 +3723,7 @@ static mz_bool mz_zip_reader_read_central_dir(mz_zip_archive *pZip, mz_uint flag
 	if (cdir_size < (mz_uint64)pZip->m_total_files * MZ_ZIP_CENTRAL_DIR_HEADER_SIZE)
 		return mz_zip_set_error(pZip, MZ_ZIP_INVALID_HEADER_OR_CORRUPTED);
 
-	if ((cdir_ofs + (mz_uint64)cdir_size) > pZip->m_archive_size)
+	if (cdir_size > pZip->m_archive_size || cdir_ofs > pZip->m_archive_size - cdir_size)
 		return mz_zip_set_error(pZip, MZ_ZIP_INVALID_HEADER_OR_CORRUPTED);
 
 	if (eocd_ofs < cdir_ofs + cdir_size)
